@@ -22,10 +22,8 @@ type Hub struct {
 	register   chan *Client
 	unregister chan *Client
 	mu         sync.Mutex
-	db         *sqlx.DB  // burada db ekleniyor
+	db         *sqlx.DB // burada db ekleniyor
 }
-
- 
 
 func NewHub(db *sqlx.DB) *Hub {
 	return &Hub{
@@ -33,10 +31,22 @@ func NewHub(db *sqlx.DB) *Hub {
 		broadcast:  make(chan Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		db:         db,  // db atanıyor
+		db:         db, // db atanıyor
 	}
 }
-
+func (h *Hub) BroadcastToChannel(chID int, msg Message) {
+	h.mu.Lock()
+	for client := range h.clients {
+		// tüm kanal üyelerine gönder
+		select {
+		case client.send <- encode(msg):
+		default:
+			close(client.send)
+			delete(h.clients, client)
+		}
+	}
+	h.mu.Unlock()
+}
 func (h *Hub) Run() {
 	for {
 		select {
@@ -57,7 +67,7 @@ func (h *Hub) Run() {
 		case msg := <-h.broadcast:
 			h.mu.Lock()
 			for client := range h.clients {
-				if client.userID == msg.ToUID || client.userID == msg.FromUID {
+				if client.userID == int64(msg.ToUID) || client.userID == msg.FromUID {
 					select {
 					case client.send <- encode(msg):
 					default:
@@ -69,10 +79,10 @@ func (h *Hub) Run() {
 			h.mu.Unlock()
 
 			go func() {
-		if err := SaveMessage(h.db, msg); err != nil {
-			log.Println("SaveMessage error:", err)
-		}
-	}()
+				if err := SaveMessage(h.db, msg); err != nil {
+					log.Println("SaveMessage error:", err)
+				}
+			}()
 		}
 	}
 }

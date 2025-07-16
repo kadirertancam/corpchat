@@ -3,13 +3,15 @@ package main
 import (
     "log"
     "os"
-
+     
     "github.com/gin-gonic/gin"
     "github.com/jmoiron/sqlx"
     _ "github.com/lib/pq"
 
-    "github.com/kadirertancam/corpchat/backend/db" // db paketinizin yolu
+
 )
+import "github.com/kadirertancam/corpchat/backend/internal/db"
+import "github.com/kadirertancam/corpchat/backend/internal/api"
 
 func main() {
     dbx, err := sqlx.Connect("postgres", mustGetEnv("DB_DSN"))
@@ -17,19 +19,14 @@ func main() {
         log.Fatal(err)
     }
 
-    sqlDB, err := dbx.DB()
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    if err := db.Migrate(sqlDB); err != nil {
-        log.Fatal(err)
-    }
+   if err := db.Migrate(dbx.DB); err != nil {
+    log.Fatal(err)
+}
 
     r := gin.Default()
     r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
-    r.POST("/register", registerHandler(dbx))
-    // r.POST("/login", loginHandler(dbx)) // loginHandler yoksa kaldırın
+    r.POST("/register", api.Register(dbx))
+    r.POST("/login", api.Login(dbx))
 
     r.Run(":8080")
 }

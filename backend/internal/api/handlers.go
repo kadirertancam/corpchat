@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
-	"corpchat/internal/auth"
 )
+import "github.com/kadirertancam/corpchat/backend/internal/auth"
 
 type registerReq struct {
 	Username string `json:"username" binding:"required"`

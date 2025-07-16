@@ -8,7 +8,8 @@ export default function PricingTR() {
         {[
           { title: "Başlangıç", price: "₺0", features: ["10 kullanıcı", "Temel destek"] },
           { title: "Profesyonel", price: "₺199/mo", features: ["Sınırsız kullanıcı", "SSO", "Öncelikli destek"] },
-          { title: "Kurumsal", price: "İletişim", features: ["SLA", Beyaz etiket, Özel bulut"] },
+          { title: "Kurumsal", price: "İletişim", features: ["SLA", "Beyaz etiket", "Özel bulut"] },
+
         ].map((p) => (
           <div key={p.title} className="border rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-2">{p.title}</h2>

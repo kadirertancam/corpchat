@@ -1,5 +1,5 @@
-import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/header";
+import { Sidebar } from "@/app/components/sidebar";
+import { Header } from "@/app/components/header";
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
   return (

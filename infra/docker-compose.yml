@@ -30,3 +30,14 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes: ["./minio:/data"]
+  app:
+    build:
+      context: ../web/corpchatt
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+      - db

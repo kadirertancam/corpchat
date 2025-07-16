@@ -24,7 +24,7 @@ func main() {
    if err := db.Migrate(dbx.DB); err != nil {
     log.Fatal(err)
 }
-    hub := chat.NewHub()
+    hub := chat.NewHub(dbx)
     go hub.Run()
 
     r := gin.Default()

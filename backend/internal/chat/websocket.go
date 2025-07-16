@@ -13,7 +13,7 @@ import "github.com/kadirertancam/corpchat/backend/internal/auth"
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
-
+ 
 func WsHandler(hub *Hub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr := c.Query("token")
@@ -27,7 +27,7 @@ func WsHandler(hub *Hub) gin.HandlerFunc {
 
 		client := &Client{
 			conn:   conn,
-			userID: claims.UserID,
+			userID: int64(claims.UserID),
 			send:   make(chan []byte, 256),
 			hub:    hub,
 		}

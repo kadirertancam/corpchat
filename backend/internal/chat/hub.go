@@ -6,11 +6,12 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/jmoiron/sqlx"
 )
 
 type Client struct {
 	conn   *websocket.Conn
-	userID int
+	userID int64
 	send   chan []byte
 	hub    *Hub
 }
@@ -21,20 +22,18 @@ type Hub struct {
 	register   chan *Client
 	unregister chan *Client
 	mu         sync.Mutex
+	db         *sqlx.DB  // burada db ekleniyor
 }
 
-type Message struct {
-	FromUID int    `json:"from_uid"`
-	ToUID   int    `json:"to_uid"`
-	Body    string `json:"body"`
-}
+ 
 
-func NewHub() *Hub {
+func NewHub(db *sqlx.DB) *Hub {
 	return &Hub{
 		clients:    make(map[*Client]bool),
 		broadcast:  make(chan Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
+		db:         db,  // db atanıyor
 	}
 }
 
@@ -69,7 +68,11 @@ func (h *Hub) Run() {
 			}
 			h.mu.Unlock()
 
-			go SaveMessage(db, msg)
+			go func() {
+		if err := SaveMessage(h.db, msg); err != nil {
+			log.Println("SaveMessage error:", err)
+		}
+	}()
 		}
 	}
 }

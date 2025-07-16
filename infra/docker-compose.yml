@@ -20,3 +20,4 @@ services:
     depends_on: [db, redis, nats]
     ports: ["8080:8080"]
     command: ["./corpchat-server"]
+ 

@@ -7,7 +7,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_webrtc: ^0.11.6+hotfix.1
   provider: ^6.0.5
+  sdp_transform: ^0.3.2
   web_socket_channel: ^2.4.0
 
 flutter:

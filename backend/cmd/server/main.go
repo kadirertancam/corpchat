@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/kadirertancam/corpchat/backend/internal/api"
+	"github.com/kadirertancam/corpchat/backend/internal/call"
 	"github.com/kadirertancam/corpchat/backend/internal/chat"
 	"github.com/kadirertancam/corpchat/backend/internal/db"
 	"github.com/kadirertancam/corpchat/backend/internal/file"
@@ -30,8 +31,10 @@ func main() {
 		Creds:  credentials.NewStaticV4("minioadmin", "minioadmin", ""),
 		Secure: false,
 	})
+	callHub := call.NewCallHub()
 
 	r := gin.Default()
+	r.GET("/ws/call", call.WsCallHandler(callHub))
 	r.Static("/cdn", "./uploads")
 	r.POST("/upload", file.UploadHandler(minioClient, "corpchat"))
 	r.GET("/ws", chat.WsHandler(hub))

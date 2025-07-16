@@ -1,9 +1,27 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'services/ws_service.dart';
+import 'providers/chat_provider.dart';
+
+
 void main() => runApp(
   ChangeNotifierProvider(
     create: (_) => ChatProvider(WsService("JWT_HERE"), 1, 2),
     child: const MyApp(),
   ),
 );
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'CorpChat',
+      home: ChatScreen(),
+    );
+  }
+}
 
 class ChatScreen extends StatelessWidget {
   @override

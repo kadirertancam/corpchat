@@ -1,0 +1,19 @@
+name: CI
+on: [push]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.22' }
+      - run: cd backend && go test ./...
+      - run: cd backend && docker build -t corpchat/backend .
+  mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '3.22' }
+      - run: cd mobile && flutter pub get
+      - run: cd mobile && flutter build web

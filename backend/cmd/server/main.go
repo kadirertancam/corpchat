@@ -13,6 +13,8 @@ import (
 import "github.com/kadirertancam/corpchat/backend/internal/db"
 import "github.com/kadirertancam/corpchat/backend/internal/api"
 
+import "github.com/kadirertancam/corpchat/backend/internal/chat"
+
 func main() {
     dbx, err := sqlx.Connect("postgres", mustGetEnv("DB_DSN"))
     if err != nil {
@@ -22,8 +24,11 @@ func main() {
    if err := db.Migrate(dbx.DB); err != nil {
     log.Fatal(err)
 }
+    hub := chat.NewHub()
+    go hub.Run()
 
     r := gin.Default()
+    r.GET("/ws", chat.WsHandler(hub))
     r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
     r.POST("/register", api.Register(dbx))
     r.POST("/login", api.Login(dbx))

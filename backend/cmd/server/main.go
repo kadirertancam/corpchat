@@ -2,7 +2,8 @@ package main
 
 import (
 	"log"
-	"net/http"
+	"os"
+	//"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -27,4 +28,12 @@ func registerHandler(db *sqlx.DB) gin.HandlerFunc {
 		_, _ = db.Exec(`INSERT INTO users(username, password_hash) VALUES($1, crypt($2, gen_salt('bf')))`, q.Username, q.Password)
 		c.JSON(201, gin.H{"ok": true})
 	}
+}
+
+func mustGetEnv(key string) string {
+    val := os.Getenv(key)
+    if val == "" {
+        log.Fatalf("Environment variable %s is required.", key)
+    }
+    return val
 }
